@@ -1,11 +1,11 @@
-const autentificacao = require('../middleware/autentificacaoMiddleware');
+const autentificacao = require('../middlewares/authMiddleware');
 
-// Login simples apenas para gerar token e proteger rotas
+// Login básico para gerar token
 async function logar(req, res) {
     try {
         const { usuario, senha } = req.body;
 
-        // Login básico (sem banco de dados por enquanto)
+        // Login simples (sem banco de dados no momento)
         if (usuario !== "admin" || senha !== "1234") {
             return res.status(401).json({ msg: "Credenciais inválidas" });
         }
