@@ -1,23 +1,26 @@
-const autentificacao = require('../middlewares/authMiddleware');
+const Usuario = require('../models/usuarioModel');
+const auth = require('../middlewares/authMiddleware');
 
-// Login básico para gerar token
 async function logar(req, res) {
     try {
-        const { usuario, senha } = req.body;
+        const { email, senha } = req.body;
 
-        // Login simples (sem banco de dados no momento)
-        if (usuario !== "admin" || senha !== "1234") {
-            return res.status(401).json({ msg: "Credenciais inválidas" });
+        const user = await Usuario.findOne({ email }).select("+senha");
+        if (!user) {
+            return res.status(401).json({ msg: "Usuário não encontrado" });
         }
 
-        // Payload do token
+        if (user.senha !== senha) {
+            return res.status(401).json({ msg: "Senha incorreta" });
+        }
+
         const payload = {
-            iss: "API de Produtos",
-            aud: "Usuário Autenticado",
-            usuario: "admin"
+            id: user._id,
+            email: user.email,
+            nome: user.nome
         };
 
-        const token = autentificacao.gerarToken(payload);
+        const token = auth.gerarToken(payload);
 
         return res.status(200).json({ token });
 

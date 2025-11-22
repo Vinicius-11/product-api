@@ -1,29 +1,34 @@
 const express = require('express');
 const router = express.Router();
 
-const autentificacaoController = require('../controllers/authController');
+const authController = require('../controllers/authController');
 const usuarioController = require('../controllers/usuarioController');
 const auth = require('../middlewares/authMiddleware');
 
-// Criar usuário (aberto)
 router.post('/', usuarioController.adicionarUsuario);
 
-// Login (gera token)
-router.post('/login', autentificacaoController.logar);
+router.post('/login', authController.logar);
 
-// Renovar token
-router.post('/renova', auth.verificarToken, auth.renovarToken);
+router.post('/renovar', auth.verificarToken, auth.renovarToken);
 
-// Listar usuários (com token)
 router.get('/', auth.verificarToken, usuarioController.listarUsuarios);
 
-// Buscar usuário por ID
-router.get('/:id', auth.verificarToken, usuarioController.buscarUsuario, usuarioController.exibirUsuario);
+router.get('/:id', 
+    auth.verificarToken, 
+    usuarioController.buscarUsuario, 
+    usuarioController.exibirUsuario
+);
 
-// Atualizar usuário
-router.put('/:id', auth.verificarToken, usuarioController.buscarUsuario, usuarioController.editarUsuario);
+router.put('/:id', 
+    auth.verificarToken, 
+    usuarioController.buscarUsuario, 
+    usuarioController.editarUsuario
+);
 
-// Deletar usuário
-router.delete('/:id', auth.verificarToken, usuarioController.buscarUsuario, usuarioController.deletarUsuario);
+router.delete('/:id', 
+    auth.verificarToken, 
+    usuarioController.buscarUsuario, 
+    usuarioController.deletarUsuario
+);
 
 module.exports = router;

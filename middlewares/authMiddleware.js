@@ -7,44 +7,38 @@ function verificarToken(req, res, next) {
         return res.status(401).json({ msg: 'Token ausente' });
     }
 
+    const token = authHeader.startsWith("Bearer ")
+        ? authHeader.split(" ")[1]
+        : authHeader;
+
     try {
-        let payload = null;
-
-        // Suporte a "Bearer token"
-        if (authHeader.includes("Bearer ")) {
-            const token = authHeader.split(" ")[1];
-            payload = jwt.verify(token, process.env.JWT_SECRET);
-        } else {
-            payload = jwt.verify(authHeader, process.env.JWT_SECRET);
-        }
-
-        req.usuario = {
-            email: payload.email // você pode incluir mais dados caso queira
-        };
-
+        const payload = jwt.verify(token, process.env.JWT_SECRET);
+        req.usuario = payload; // payload REAL
         next();
     } catch (err) {
         return res.status(401).json({ msg: "Token inválido" });
     }
 }
 
-// Gerar novo token
 function gerarToken(payload) {
-    try {
-        const expiresIn = process.env.JWT_EXPIRES || "30m";
-        const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn });
-        return token;
-    } catch (err) {
-        throw new Error("Erro ao gerar token");
-    }
+    return jwt.sign(
+        payload,
+        process.env.JWT_SECRET,
+        { expiresIn: process.env.JWT_EXPIRES || '60m' }
+    );
 }
 
-// Rota interna de renovação
 function renovarToken(req, res) {
     try {
         const payload = req.usuario;
-        const novoToken = gerarToken(payload);
-        return res.json({ token: novoToken });
+
+        // Remove campos automáticos do JWT antigo
+        delete payload.iat;
+        delete payload.exp;
+
+        const novo = gerarToken(payload);
+        return res.json({ token: novo });
+
     } catch (err) {
         return res.status(500).json({ msg: "Erro ao renovar token" });
     }
