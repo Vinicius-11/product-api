@@ -1,5 +1,5 @@
-const mongoose = require('mongoose');
-const Produto = require('../models/produtosModel');
+const mongoose = require("mongoose");
+const Produto = require("../models/produtosModel");
 
 /**
  * POST /produtos
@@ -11,11 +11,14 @@ async function criar(req, res) {
     return res.status(201).json(novoProduto);
   } catch (err) {
     // Tratamento para erro de validação do Mongoose
-    if (err && err.name === 'ValidationError') {
-      return res.status(422).json({ msg: 'Nome e preço do produto são obrigatórios' });
+    if (err && err.name === "ValidationError") {
+      return res
+        .status(422)
+        .json({ msg: "Nome e preço do produto são obrigatórios" });
     }
     // fallback
-    return res.status(500).json({ msg: 'Erro interno' });
+    console.error(err);
+    return res.status(500).json({ msg: "Erro interno", erro: err.message });
   }
 }
 
@@ -27,7 +30,8 @@ async function listar(req, res) {
     const produtosCadastrados = await Produto.find({});
     return res.status(200).json(produtosCadastrados);
   } catch (err) {
-    return res.status(500).json({ msg: 'Erro interno' });
+    console.error(err);
+    return res.status(500).json({ msg: "Erro interno", erro: err.message });
   }
 }
 
@@ -42,7 +46,7 @@ async function buscar(req, res, next) {
 
   // validação do id
   if (!mongoose.Types.ObjectId.isValid(id)) {
-    return res.status(400).json({ msg: 'Parâmetro inválido' });
+    return res.status(400).json({ msg: "Parâmetro inválido" });
   }
 
   try {
@@ -51,10 +55,11 @@ async function buscar(req, res, next) {
       req.produto = produtoEncontrado;
       return next();
     } else {
-      return res.status(404).json({ msg: 'Produto não encontrado' });
+      return res.status(404).json({ msg: "Produto não encontrado" });
     }
   } catch (err) {
-    return res.status(500).json({ msg: 'Erro interno' });
+    console.error(err);
+    return res.status(500).json({ msg: "Erro interno", erro: err.message });
   }
 }
 
@@ -83,15 +88,18 @@ async function atualizar(req, res) {
 
     // Se por algum motivo não existe (já tratado no buscar), devolve 404
     if (!produtoAtualizado) {
-      return res.status(404).json({ msg: 'Produto não encontrado' });
+      return res.status(404).json({ msg: "Produto não encontrado" });
     }
 
     return res.status(200).json(produtoAtualizado);
   } catch (err) {
-    if (err && err.name === 'ValidationError') {
-      return res.status(422).json({ msg: 'Nome e preço do produto são obrigatórios' });
+    if (err && err.name === "ValidationError") {
+      return res
+        .status(422)
+        .json({ msg: "Nome e preço do produto são obrigatórios" });
     }
-    return res.status(500).json({ msg: 'Erro interno' });
+    console.error(err);
+    return res.status(500).json({ msg: "Erro interno", erro: err.message });
   }
 }
 
@@ -105,7 +113,8 @@ async function remover(req, res) {
     await Produto.findOneAndDelete({ _id: id });
     return res.status(204).send();
   } catch (err) {
-    return res.status(500).json({ msg: 'Erro interno' });
+    console.error(err);
+    return res.status(500).json({ msg: "Erro interno", erro: err.message });
   }
 }
 
@@ -115,5 +124,5 @@ module.exports = {
   buscar,
   exibir,
   atualizar,
-  remover
+  remover,
 };
