@@ -4,15 +4,13 @@ const express = require('express');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 
-// Import da conexão com o banco
-const ConectarDB = require('./config/database');
+const ConectarDB = require('./config/database.js');
 
-// Import das rotas
 const produtosRouter = require('./routes/produtosRouter');
+const usuariosRouter = require('./routes/usuariosRouter');
 
 const app = express();
 
-// Conectar ao banco
 ConectarDB();
 
 app.use(logger('dev'));
@@ -22,8 +20,9 @@ app.use(cookieParser());
 
 // ROTAS
 app.use('/produtos', produtosRouter);
+app.use('/usuarios', usuariosRouter);
 
-// 404 para rotas não encontradas
+// 404
 app.use((req, res) => {
   res.status(404).json({ msg: 'Rota não encontrada' });
 });

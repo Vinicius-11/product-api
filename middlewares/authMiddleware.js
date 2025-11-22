@@ -31,7 +31,7 @@ function verificarToken(req, res, next) {
 // Gerar novo token
 function gerarToken(payload) {
     try {
-        const expiresIn = process.env.JWT_EXPIRES || "30m";
+        const expiresIn = process.env.JWT_EXPIRES || "60m";
         const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn });
         return token;
     } catch (err) {
