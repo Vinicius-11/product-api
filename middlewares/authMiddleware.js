@@ -1,57 +1,58 @@
-const jwt = require('jsonwebtoken');
+const jwt = require("jsonwebtoken");
 
 function verificarToken(req, res, next) {
-    const authHeader = req.headers.authorization || req.headers.Authorization;
+  const authHeader = req.headers.authorization || req.headers.Authorization;
 
-    if (!authHeader) {
-        return res.status(401).json({ msg: 'Token ausente' });
-    }
+  if (!authHeader) {
+    return res.status(401).json({ msg: "Token ausente" });
+  }
 
-    try {
-        let payload = null;
+  const token = authHeader.startsWith("Bearer ")
+    ? authHeader.split(" ")[1]
+    : authHeader;
 
-        // Suporte a "Bearer token"
-        if (authHeader.includes("Bearer ")) {
-            const token = authHeader.split(" ")[1];
-            payload = jwt.verify(token, process.env.JWT_SECRET);
-        } else {
-            payload = jwt.verify(authHeader, process.env.JWT_SECRET);
-        }
+  try {
+    const payload = jwt.verify(token, process.env.JWT_SECRET);
 
-        req.usuario = {
-            email: payload.email // você pode incluir mais dados caso queira
-        };
+    // Salva payload no req
+    req.usuario = { ...payload };
 
-        next();
-    } catch (err) {
-        return res.status(401).json({ msg: "Token inválido" });
-    }
+    return next();
+  } catch (err) {
+    return res.status(401).json({ msg: "Token inválido" });
+  }
 }
 
-// Gerar novo token
 function gerarToken(payload) {
-    try {
-        const expiresIn = process.env.JWT_EXPIRES || "60m";
-        const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn });
-        return token;
-    } catch (err) {
-        throw new Error("Erro ao gerar token");
+  return jwt.sign(
+    payload,
+    process.env.JWT_SECRET,
+    {
+      expiresIn: process.env.JWT_EXPIRES || "60m"
     }
+  );
 }
 
-// Rota interna de renovação
 function renovarToken(req, res) {
-    try {
-        const payload = req.usuario;
-        const novoToken = gerarToken(payload);
-        return res.json({ token: novoToken });
-    } catch (err) {
-        return res.status(500).json({ msg: "Erro ao renovar token" });
+  try {
+    if (!req.usuario) {
+      return res.status(401).json({ msg: "Token inválido" });
     }
+
+    const payload = { ...req.usuario };
+    delete payload.iat;
+    delete payload.exp;
+
+    const novo = gerarToken(payload);
+
+    return res.json({ token: novo });
+  } catch (err) {
+    return res.status(500).json({ msg: "Erro ao renovar token" });
+  }
 }
 
 module.exports = {
-    verificarToken,
-    gerarToken,
-    renovarToken
+  verificarToken,
+  gerarToken,
+  renovarToken
 };
