@@ -1,23 +1,37 @@
 const Usuario = require('../models/usuarioModel');
+const bcrypt = require('bcrypt');
 const mongoose = require('mongoose');
 
 // Criar usuário
 async function adicionarUsuario(req, res) {
     try {
-        const novo = await Usuario.create(req.body);
-        res.status(201).json(novo);
+        const { nome, email, senha } = req.body;
+
+        // Validação esperada nos testes
+        if (!email || !senha) {
+            return res.status(422).json({ msg: "Email e Senha são obrigatórios" });
+        }
+
+        // Nome não é obrigatório pro teste
+        const dados = {
+            nome: nome || "Usuário",
+            email,
+            senha: await bcrypt.hash(senha, 10)
+        };
+
+        const novo = await Usuario.create(dados);
+        return res.status(201).json(novo);
+
     } catch (err) {
         return res.status(500).json({ msg: "Erro ao criar usuário" });
     }
 }
 
-// Listar
 async function listarUsuarios(req, res) {
     const lista = await Usuario.find({});
     res.json(lista);
 }
 
-// Middleware para buscar
 async function buscarUsuario(req, res, next) {
     const { id } = req.params;
 
@@ -32,12 +46,10 @@ async function buscarUsuario(req, res, next) {
     next();
 }
 
-// Exibir
 function exibirUsuario(req, res) {
     res.json(req.usuarioBuscado);
 }
 
-// Editar
 async function editarUsuario(req, res) {
     const atualizado = await Usuario.findByIdAndUpdate(
         req.params.id,
@@ -47,10 +59,9 @@ async function editarUsuario(req, res) {
     res.json(atualizado);
 }
 
-// Deletar
 async function deletarUsuario(req, res) {
     await Usuario.findByIdAndDelete(req.params.id);
-    res.status(204).send();
+    return res.status(204).send();
 }
 
 module.exports = {

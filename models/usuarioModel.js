@@ -1,11 +1,10 @@
 const mongoose = require('mongoose');
 
-
 const schema = new mongoose.Schema({
     nome: {
         type: String,
-        required: [true, "Nome do usuário é obrigatório"],
-        trim: true
+        trim: true,
+        default: "Usuário"
     },
     email: {
         type: String,
@@ -18,9 +17,8 @@ const schema = new mongoose.Schema({
         type: String,
         required: [true, "Senha do usuário é obrigatório"],
         trim: true,
-        select:false
+        select: false
     }
-})
-
+});
 
 module.exports = mongoose.model('Usuario', schema);
