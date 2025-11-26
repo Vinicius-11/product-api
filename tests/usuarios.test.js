@@ -49,9 +49,6 @@ describe("TESTES DA API /usuarios", () => {
     usuarioId = resp.body._id;
   });
 
-  // -------------------------------
-  // LOGIN
-  // -------------------------------
   test("POST /usuarios/login → 401 email incorreto", async () => {
     await request(app)
       .post("/usuarios/login")
@@ -120,9 +117,6 @@ describe("TESTES DA API /usuarios", () => {
     expect(resp.body).toHaveProperty("_id", usuarioId);
   });
 
-  // -------------------------------
-  // PUT
-  // -------------------------------
   test("PUT /usuarios/:id → 400 id inválido", async () => {
     await request(app)
       .put("/usuarios/0")
@@ -154,9 +148,6 @@ describe("TESTES DA API /usuarios", () => {
     expect(resp.status).toBe(200);
   });
 
-  // -------------------------------
-  // DELETE
-  // -------------------------------
   test("DELETE /usuarios/:id → 400 id inválido", async () => {
     await request(app).delete("/usuarios/0").set("authorization", `Bearer ${token}`).expect(400);
   });

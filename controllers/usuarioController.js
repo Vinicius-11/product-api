@@ -2,17 +2,14 @@ const Usuario = require('../models/usuarioModel');
 const bcrypt = require('bcrypt');
 const mongoose = require('mongoose');
 
-// Criar usuário
 async function adicionarUsuario(req, res) {
     try {
         const { nome, email, senha } = req.body;
 
-        // Validação esperada nos testes
         if (!email || !senha) {
             return res.status(422).json({ msg: "Email e Senha são obrigatórios" });
         }
 
-        // Nome não é obrigatório pro teste
         const dados = {
             nome: nome || "Usuário",
             email,

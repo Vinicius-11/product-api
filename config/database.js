@@ -4,7 +4,7 @@ const url = `mongodb+srv://${process.env.MONGODB_USER}:${process.env.MONGODB_PAS
 
 const ConectarDB = async () => {
   try {
-    await mongoose.connect(url); // remove opções antigas
+    await mongoose.connect(url);
     console.log("Conectado ao MongoDB com sucesso!");
   } catch (error) {
     console.error("Erro ao conectar ao MongoDB:", error.message);

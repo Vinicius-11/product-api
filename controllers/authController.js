@@ -11,7 +11,6 @@ async function logar(req, res) {
             return res.status(401).json({ msg: "Credenciais inválidas" });
         }
 
-        // precisa buscar com a senha (select:false no model)
         const user = await Usuario.findOne({ email }).select("+senha");
 
         if (!user) {
