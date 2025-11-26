@@ -9,6 +9,10 @@ const ConectarDB = require('./config/database.js');
 const produtosRouter = require('./routes/produtosRouter');
 const usuariosRouter = require('./routes/usuariosRouter');
 
+const swaggerUi = require('swagger-ui-express');
+const YAML = require('yaml');
+const fs = require('fs');
+
 const app = express();
 
 ConectarDB();
@@ -18,9 +22,18 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
-// ROTAS
 app.use('/produtos', produtosRouter);
 app.use('/usuarios', usuariosRouter);
+
+const swaggerPath = './swagger.yaml';
+
+try {
+  const file = fs.readFileSync(swaggerPath, 'utf8');
+  const swaggerDocument = YAML.parse(file);
+  app.use('/api-doc', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+} catch (e) {
+  console.error('Erro ao carregar swagger.yaml:', e.message);
+}
 
 // 404
 app.use((req, res) => {

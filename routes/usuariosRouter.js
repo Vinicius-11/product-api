@@ -5,19 +5,14 @@ const authController = require("../controllers/authController");
 const usuarioController = require("../controllers/usuarioController");
 const auth = require("../middlewares/authMiddleware");
 
-// Criar usuário (rota aberta)
 router.post("/", usuarioController.adicionarUsuario);
 
-// Login
 router.post("/login", authController.logar);
 
-// Renovar token
 router.post("/renovar", auth.verificarToken, auth.renovarToken);
 
-// Listar todos
 router.get("/", auth.verificarToken, usuarioController.listarUsuarios);
 
-// Buscar por ID
 router.get(
   "/:id",
   auth.verificarToken,
@@ -25,7 +20,6 @@ router.get(
   usuarioController.exibirUsuario
 );
 
-// Atualizar usuário
 router.put(
   "/:id",
   auth.verificarToken,
@@ -33,7 +27,6 @@ router.put(
   usuarioController.editarUsuario
 );
 
-// Deletar usuário
 router.delete(
   "/:id",
   auth.verificarToken,
