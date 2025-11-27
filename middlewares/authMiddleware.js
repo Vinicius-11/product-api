@@ -14,7 +14,6 @@ function verificarToken(req, res, next) {
   try {
     const payload = jwt.verify(token, process.env.JWT_SECRET);
 
-    // Salva payload no req
     req.usuario = { ...payload };
 
     return next();

@@ -30,7 +30,7 @@ const swaggerPath = './swagger.yaml';
 try {
   const file = fs.readFileSync(swaggerPath, 'utf8');
   const swaggerDocument = YAML.parse(file);
-  app.use('/api-doc', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+  app.use('/product-api', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 } catch (e) {
   console.error('Erro ao carregar swagger.yaml:', e.message);
 }
