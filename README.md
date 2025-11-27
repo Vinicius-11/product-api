@@ -72,12 +72,17 @@ swagger.yaml
 ```
 
 ## Como Executar o Projeto
-1. Instale as dependências:
+1. Instalar Dependências do Projeto:
 ```shell
-npm install
+npm install express mongoose dotenv jsonwebtoken bcryptjs swagger-ui-express yaml cors
 ```
 
-2. Configure o arquivo .env:
+2. Instalar Dependências de Desenvolvimento (Testes e Monitoramento):
+```shell
+npm install nodemon jest supertest --save-dev 
+```
+
+3. Crie e Configure o arquivo .env:
 ```shell
 MONGODB_USER=seu_usuario
 MONGODB_PASSWORD=sua_senha
