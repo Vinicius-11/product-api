@@ -43,7 +43,7 @@ O projeto segue boas práticas REST, separação por camadas (routes, controller
 
 ## Estrutura do Projeto
 
-shell
+```shell
 /config
   ├── database.js
 /controllers
@@ -69,28 +69,28 @@ package-lock.json
 packjage.json
 README.md
 swagger.yaml
-
+```
 
 ## Como Executar o Projeto
 1. Instale as dependências:
-shell
+```shell
 npm install
-
+```
 
 2. Configure o arquivo .env:
-shell
+```shell
 MONGODB_USER=seu_usuario
 MONGODB_PASSWORD=sua_senha
 MONGODB_HOST=seuhost.mongodb.net 
 MONGODB_DBNM=seubanco
 JWT_SECRET=suachave
 JWT_EXPIRES=1h
-
+```
 
 3. Execute o servidor:
-shell
+```shell
 npm run dev
-
+```
 
 ### Autenticação (JWT)
 
